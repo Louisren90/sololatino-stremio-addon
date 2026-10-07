@@ -50,6 +50,7 @@ function parseRating(text) {
   return m ? Number(m[1]) : undefined;
 }
 
+// ---> FUNCIÓN ACTUALIZADA CON CABECERAS DE NAVEGADOR REAL <---
 async function fetchHtml(url) {
   const now = Date.now();
   const cached = cache.get(url);
@@ -60,8 +61,19 @@ async function fetchHtml(url) {
 
   const r = await fetch(url, {
     headers: {
-      "User-Agent": USER_AGENT,
-      "Accept": "text/html,application/xhtml+xml"
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
+      "Cache-Control": "no-cache",
+      "Pragma": "no-cache",
+      "Sec-Ch-Ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+      "Sec-Ch-Ua-Mobile": "?0",
+      "Sec-Ch-Ua-Platform": '"Windows"',
+      "Sec-Fetch-Dest": "document",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-User": "?1",
+      "Upgrade-Insecure-Requests": "1"
     }
   });
 
@@ -362,27 +374,6 @@ function episodeInfoFromId(id) {
   };
 }
 
-/*
- * Busca fuentes directas de vídeo dentro de la página.
- *
- * Formatos contemplados:
- * - MP4
- * - M3U8
- * - WebM
- * - MPD
- *
- * También revisa:
- * - <video src="">
- * - <source src="">
- * - og:video
- * - og:video:url
- * - iframe/a
- * - URLs escritas dentro del HTML
- *
- * No intenta saltarse DRM, autenticación,
- * paywalls ni protecciones.
- */
-
 function extractMediaUrls(html, pageUrl) {
   const $ = cheerio.load(html);
 
@@ -469,11 +460,6 @@ function extractMediaUrls(html, pageUrl) {
       );
     }
   );
-
-  /*
-   * Busca URLs directas de medios escritas
-   * dentro del HTML o JavaScript.
-   */
 
   const rawMatches =
     html.match(
@@ -590,11 +576,6 @@ async function resolveStreams(id, type) {
   if (!pageUrl) {
     return [];
   }
-
-  /*
-   * Para series buscamos primero la página
-   * concreta del episodio.
-   */
 
   if (type === "series") {
     const info = episodeInfoFromId(id);
@@ -787,20 +768,6 @@ app.get(
     }
   }
 );
-
-/*
- * STREAM
- *
- * Antes devolvía:
- *
- * externalUrl: sourceUrl
- *
- * Eso hacía que Stremio abriera la página
- * externamente.
- *
- * Ahora busca una URL directa de vídeo
- * y la devuelve mediante "url".
- */
 
 app.get(
   "/stream/:type/:id.json",
