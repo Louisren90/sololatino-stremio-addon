@@ -1,0 +1,16 @@
+{
+  "name": "sololatino-stremio-addon",
+  "version": "1.0.0",
+  "description": "Stremio addon that exposes SoloLatino public catalog/metadata and links users to the corresponding SoloLatino pages.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "express": "^4.21.2"
+  }
+}

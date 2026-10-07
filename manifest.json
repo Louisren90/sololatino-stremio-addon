@@ -1,0 +1,52 @@
+{
+  "id": "mx.sololatino.catalog",
+  "version": "1.0.0",
+  "name": "SoloLatino Catálogo",
+  "description": "Catálogo y metadatos de SoloLatino. Abre la página correspondiente de SoloLatino para continuar.",
+  "logo": "https://sololatino.net/favicon.ico",
+  "resources": [
+    "catalog",
+    "meta",
+    "stream"
+  ],
+  "types": [
+    "movie",
+    "series"
+  ],
+  "catalogs": [
+    {
+      "type": "movie",
+      "id": "sololatino-movies",
+      "name": "SoloLatino • Películas",
+      "extra": [
+        {
+          "name": "search",
+          "isRequired": false
+        },
+        {
+          "name": "skip",
+          "isRequired": false
+        }
+      ]
+    },
+    {
+      "type": "series",
+      "id": "sololatino-series",
+      "name": "SoloLatino • Series",
+      "extra": [
+        {
+          "name": "search",
+          "isRequired": false
+        },
+        {
+          "name": "skip",
+          "isRequired": false
+        }
+      ]
+    }
+  ],
+  "behaviorHints": {
+    "configurable": false,
+    "p2p": false
+  }
+}
