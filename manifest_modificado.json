@@ -13,6 +13,9 @@
     "movie",
     "series"
   ],
+  "idPrefixes": [
+    "sl:"
+  ],
   "catalogs": [
     {
       "type": "movie",
