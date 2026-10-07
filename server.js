@@ -5,7 +5,6 @@ const manifest = require("./manifest.json");
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Configuración de cabeceras CORS para Stremio
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "*");
@@ -13,12 +12,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Endpoint del Manifest
 app.get("/manifest.json", (req, res) => {
   res.json(manifest);
 });
 
-// Obtener título de la película/serie usando la API pública de Cinemeta
 async function getCinemetaMeta(type, imdbId) {
   try {
     const cleanId = imdbId.split(":")[0];
@@ -27,12 +24,11 @@ async function getCinemetaMeta(type, imdbId) {
     const data = await response.json();
     return data.meta || null;
   } catch (e) {
-    console.error("Error consultando Cinemeta:", e.message);
+    console.error("Cinemeta fetch error:", e.message);
     return null;
   }
 }
 
-// Buscar enlace directo en SoloLatino por título
 async function searchSoloLatino(title) {
   try {
     const searchUrl = `https://sololatino.net/?s=${encodeURIComponent(title)}`;
@@ -45,23 +41,21 @@ async function searchSoloLatino(title) {
     });
 
     if (!response.ok) {
-      console.error(`SoloLatino respondió con estado ${response.status}`);
+      console.error(`SoloLatino status error: ${response.status}`);
       return null;
     }
 
     const html = await response.text();
     const $ = cheerio.load(html);
-    
-    // Extrae el primer resultado coincidente
+
     const firstResult = $(".result-item, .item, article").find("a").first().attr("href");
     return firstResult || null;
   } catch (e) {
-    console.error("Error en búsqueda de SoloLatino:", e.message);
+    console.error("SoloLatino search error:", e.message);
     return null;
   }
 }
 
-// Endpoint de Resolución de Streams
 app.get("/stream/:type/:id.json", async (req, res) => {
   const { type, id } = req.params;
   const parts = id.split(":");
@@ -69,13 +63,11 @@ app.get("/stream/:type/:id.json", async (req, res) => {
   const season = parts[1];
   const episode = parts[2];
 
-  // 1. Obtener información de la película/serie
   const meta = await getCinemetaMeta(type, imdbId);
   if (!meta || !meta.name) {
     return res.json({ streams: [] });
   }
 
-  // 2. Buscar la página en SoloLatino
   const targetUrl = await searchSoloLatino(meta.name);
   const streams = [];
 
@@ -91,5 +83,5 @@ app.get("/stream/:type/:id.json", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor de Streams activo en puerto ${PORT}`);
+  console.log(`Stream server active on port ${PORT}`);
 });
